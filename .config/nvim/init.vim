@@ -6,9 +6,10 @@ call plug#begin('~/.nvim/plugged')
 
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'kien/ctrlp.vim'
+Plug 'ctrlpvim/ctrlp.vim'
 Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
 Plug 'easymotion/vim-easymotion'
+Plug 'terryma/vim-multiple-cursors'
 
 Plug 'thaerkh/vim-workspace'
 Plug 'jiangmiao/auto-pairs'
@@ -16,7 +17,26 @@ Plug 'tomtom/tcomment_vim'
 Plug 'flazz/vim-colorschemes'
 Plug 'matze/vim-move'
 Plug 'tpope/vim-surround'
+Plug 'nathanaelkane/vim-indent-guides'
 
+" COMPLETION
+Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'shougo/neoinclude.vim'
+Plug 'zchee/deoplete-clang'
+Plug 'zchee/deoplete-jedi'
+
+Plug 'shougo/neosnippet.vim'
+Plug 'shougo/neosnippet-snippets'
+Plug 'shougo/neco-vim'
+Plug 'shougo/neco-syntax'
+Plug 'ujihisa/neco-look'
+
+" VCS
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'nfvs/vim-perforce'
+
+" LANGUAGES SYNTAXES
 Plug 'vim-scripts/c.vim'
 Plug 'octol/vim-cpp-enhanced-highlight'
 
@@ -61,12 +81,17 @@ let g:airline_mode_map = {
 let g:ctrlp_working_path_mode = 'wr'
 let g:ctrlp_by_filename = 1
 
+let g:ctrlp_map = '<F3>'
+let g:ctrlp_cmd = 'CtrlP'
+
 let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn)$',
   \ 'file': '\v\.(exe|so|dll)$',
   \ 'link': 'some_bad_symbolic_links',
   \ }
+
+let g:ctrlp_root_markers = ['.p4ignore']
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " NERDTREE
@@ -75,27 +100,57 @@ map <F2> :NERDTreeToggle<CR>
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 let NERDTreeAutoDeleteBuffer = 1
+let NERDTreeShowHidden=1
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " EASYMOTION
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 let g:EasyMotion_smartcase = 1
-map  / <Plug>(easymotion-sn)
-omap / <Plug>(easymotion-tn)
 
-map  n <Plug>(easymotion-next)
-map  N <Plug>(easymotion-prev)
+" Find by n symbols
+nmap fn <Plug>(easymotion-sn)
 
-map <Leader>l <Plug>(easymotion-lineforward)
-map <Leader>j <Plug>(easymotion-j)
-map <Leader>k <Plug>(easymotion-k)
-map <Leader>h <Plug>(easymotion-linebackward)
+" map  n <Plug>(easymotion-next)
+" map  N <Plug>(easymotion-prev)
 
 " find symbol
 nmap fs <Plug>(easymotion-s)
 
 " find symbol in line
 nmap fl <Plug>(easymotion-sl)
+
+" MULTIPLE-CURSORS
+let g:multi_cursor_use_default_mapping=0
+
+" Default mapping
+let g:multi_cursor_start_word_key      = '<C-n>'
+let g:multi_cursor_select_all_word_key = '<A-n>'
+let g:multi_cursor_start_key           = 'g<C-n>'
+let g:multi_cursor_select_all_key      = 'g<A-n>'
+let g:multi_cursor_next_key            = '<C-n>'
+let g:multi_cursor_prev_key            = '<C-p>'
+let g:multi_cursor_skip_key            = '<C-x>'
+let g:multi_cursor_quit_key            = '<Esc>'
+
+
+let g:indent_guides_enable_on_vim_startup = 1
+let g:indent_guides_auto_colors = 1
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
+
+
+" DEOPLETE
+let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_smart_case = 1
+
+" set sources
+let g:deoplete#sources = {}
+
+" Disable the candidates in Comment/String syntaxes.
+call deoplete#custom#source('_',
+            \ 'disabled_syntaxes', ['Comment', 'String'])
+
+autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 
 " #############################################################################
 " VIM SETTINGS
@@ -160,13 +215,13 @@ set list listchars=tab:>-,trail:·,space:·,eol:$
 set backspace=eol,start,indent
 
 " Use [space] symbol as windows delimiter
-set fillchars+=vert:\
+set fillchars+=vert:\ 
 
 set colorcolumn=81
 
 set background=dark
 
-colorscheme Monokai
+colorscheme molokai " lucius
 
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " UNIX
 set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe  " Windows
@@ -184,9 +239,11 @@ set splitbelow
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " KEYBOARD
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" BUFFERS
 nnoremap <silent> bn :bnext<CR>
 nnoremap <silent> bp :bprevious<CR>
 
+" TABS
 nnoremap <silent> tt :tabnew<CR>
 nnoremap <silent> to :tabonly<CR>
 nnoremap <silent> tc :tabclose<CR>
@@ -198,3 +255,12 @@ nnoremap <silent> tp :tabprevious<CR>
 for i in range(1, 9)
   exec "map <M-". i ."> ". i ."gt"
 endfor
+
+" WINDOWS
+"
+nmap <silent> ww :wincmd k<CR>
+nmap <silent> ws :wincmd j<CR>
+nmap <silent> wa :wincmd h<CR>
+nmap <silent> wd :wincmd l<CR>
+
+
