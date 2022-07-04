@@ -1,0 +1,24 @@
+{
+    "workbench.colorTheme": "Monokai Pro (Filter Spectrum)",
+    "editor.renderWhitespace": "all",
+    "explorer.confirmDelete": false,
+    "editor.renderControlCharacters": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "editor.minimap.enabled": true,
+    "editor.fontSize": 10,
+    "debug.toolBarLocation": "docked",
+    "editor.fontFamily": "Fira Code",
+    "editor.fontLigatures": true,
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools",
+        "editor.formatOnSave": true
+    },
+    "editor.largeFileOptimizations": false,
+    "python.languageServer": "Pylance",
+    "workbench.editorAssociations": {
+        "*.ipynb": "jupyter.notebook.ipynb"
+    },
+    "workbench.iconTheme": "Monokai Pro (Filter Spectrum) Icons",
+    "security.workspace.trust.untrustedFiles": "open"
+}
